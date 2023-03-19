@@ -51,7 +51,7 @@ filename = None
 downloadfile = None
 
 
-@st.experimental_memo
+@st.cache_data
 def convert_mp3_to_wav_ffmpeg_bytes2bytes(input_data: bytes) -> bytes:
     """
     It converts mp3 to wav using ffmpeg
@@ -71,7 +71,7 @@ def convert_mp3_to_wav_ffmpeg_bytes2bytes(input_data: bytes) -> bytes:
     return proc.communicate(input=input_data)[0]
 
 
-@st.experimental_memo
+@st.cache_data
 def on_file_change(uploaded_mp3_file):
     return convert_mp3_to_wav_ffmpeg_bytes2bytes(uploaded_mp3_file.getvalue())
 
