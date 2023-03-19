@@ -10,6 +10,11 @@ from pydub import AudioSegment
 
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
+# global variables
+uploaded_file = None
+uploaded_file_length = 0
+filename = None
+downloadfile = None
 
 
 def convert_to_wav(path):
@@ -42,11 +47,6 @@ def convert_mp3_to_wav(path):
     return f"converted/{path.split('.')[0]}.mp3"
 
 
-# global variables
-uploaded_mp3_file = None
-uploaded_mp3_file_length = 0
-filename = None
-downloadfile = None
 
 
 def detect_file_type(file: bytes) -> str:
@@ -58,9 +58,16 @@ def detect_file_type(file: bytes) -> str:
     """
     try:
         file_type = filetype.guess(file)
+        if file_type.extension==None:
+            return 'mp3'
         return file_type.extension
     except ValueError:
         return 'mp3'
+
+def enter_details():
+    details = st.text_input("Enter details about the interview including names of people, location and any organisations mentioned for a better transcript")
+    return details
+
 
 def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
 
@@ -83,8 +90,9 @@ def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
     proc = subprocess.Popen(
             ['ffmpeg'] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
-    return proc.communicate(input=input_data)[0]
+    converted_file = proc.communicate(input=input_data)[0]
 
+    return converted_file
 
 @st.cache_data
 def on_file_change(uploaded_file):
@@ -98,11 +106,24 @@ def on_change_callback():
     print(f'Processing: {uploaded_file}')
 
 
-# The below code is a simple streamlit web app that allows you to upload an mp3 file
-# and then download the converted wav file.
-if __name__ == '__main__':
-    st.title('WhisperWords')
-    st.markdown("""Upload file for transcription""")
+def transcript_with_whisper(converted_file: bytes) -> str:
+    # This function transcribes the audio file and returns the transcript using openai's whisperwords api
+
+    # get the details of the interview
+    details = enter_details()
+
+    openai.api_key = os.getenv("OPENAI_API_KEY")
+    audio_file = open("audio.mp3", "rb")
+    transcript = openai.Audio.transcribe("whisper-1", audio_file,
+                                         prompt=details,
+                                         temperature=0.5,)
+    transcript = transcript['text']
+    display_transcript = st.empty()
+    display_transcript.write(transcript)
+    return
+
+
+def upload_file_for_transcription():
 
     uploaded_file = st.file_uploader('Upload Your File', type=['mp3', 'aac', 'wav', 'mp4'],
                                      on_change=on_change_callback)
@@ -111,17 +132,16 @@ if __name__ == '__main__':
         uploaded_file_length = len(uploaded_file.getvalue())
         filename = pathlib.Path(uploaded_file.name).stem
         if uploaded_file_length > 0:
-            st.text(f'Size of uploaded "{uploaded_file.name}" file: {uploaded_file_length} bytes')
-            downloadfile = on_file_change(uploaded_file)
+            converted_file = convert_file_to_mp3_bytes2bytes(uploaded_file.getvalue())
+            transcript_with_whisper(converted_file)
 
-    st.markdown("""---""")
-    if downloadfile:
-        length = len(downloadfile)
-        if length > 0:
-            st.subheader('After conversion to MP3 you can download it below')
-            button = st.download_button(label="Download .mp3 file",
-                                        data=downloadfile,
-                                        file_name=f'{filename}.mp3',
-                                        mime='audio/mp3')
-            st.text(f'Size of "{filename}.mp3" file to download: {length} bytes')
+
+
+# The below code is a simple streamlit web app that allows you to upload an mp3 file
+# and then download the converted wav file.
+if __name__ == '__main__':
+    st.title('WhisperWords')
+    st.markdown("""Upload file for transcription""")
+    upload_file_for_transcription()
+
     st.markdown("""---""")
