@@ -49,29 +49,40 @@ filename = None
 downloadfile = None
 
 
+def detect_file_type(file: bytes) -> str:
 
+    """
+    It detects the file type of a file.
+    :param file: bytes object of a file.
+    :return: A string with the file type.
+    """
+    try:
+        file_type = filetype.guess(file)
+        return file_type.extension
+    except ValueError:
+        return 'mp3'
 
 def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
+
     """
     It converts file to mp3 using ffmpeg
     :param input_data: bytes object of an audio file
     :return: A bytes object of a mp3 file.
     """
     # Detect file type
-    file_type = filetype.guess(input_data)
-    if not file_type:
-        raise ValueError("Unable to determine input file type")
+    file_type = detect_file_type(input_data)
     input_format = file_type.extension
 
     # Convert to mp3
     args = (ffmpeg
-            .input('pipe:', format=input_format)
-            .output('pipe:', format='mp3')
-            .global_args('-loglevel', 'error')
-            .get_args()
-            )
+                .input('pipe:', format=input_format)
+                .output('pipe:', format='mp3')
+                .global_args('-loglevel', 'error')
+                .get_args()
+                )
     proc = subprocess.Popen(
-        ['ffmpeg'] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE)
+            ['ffmpeg'] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE
+            )
     return proc.communicate(input=input_data)[0]
 
 
@@ -84,7 +95,7 @@ def on_change_callback():
     """
     It prints a message to the console. Just for testing of callbacks.
     """
-    print(f'on_change_callback: {uploaded_file}')
+    print(f'Processing: {uploaded_file}')
 
 
 # The below code is a simple streamlit web app that allows you to upload an mp3 file
