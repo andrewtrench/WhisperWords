@@ -52,16 +52,16 @@ downloadfile = None
 
 
 @st.cache_data
-def convert_mp3_to_wav_ffmpeg_bytes2bytes(input_data: bytes) -> bytes:
+def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
     """
-    It converts mp3 to wav using ffmpeg
-    :param input_data: bytes object of a mp3 file
-    :return: A bytes object of a wav file.
+    It converts file to mp3 using ffmpeg
+    :param input_data: bytes object of an audio file
+    :return: A bytes object of a mp3 file.
     """
     # print('convert_mp3_to_wav_ffmpeg_bytes2bytes')
     args = (ffmpeg
-            .input('pipe:', format='mp3')
-            .output('pipe:', format='wav')
+            .input('pipe:', format=['mp3','aac','wav','mp4'])
+            .output('pipe:', format='mp3')
             .global_args('-loglevel', 'error')
             .get_args()
             )
@@ -72,41 +72,40 @@ def convert_mp3_to_wav_ffmpeg_bytes2bytes(input_data: bytes) -> bytes:
 
 
 @st.cache_data
-def on_file_change(uploaded_mp3_file):
-    return convert_mp3_to_wav_ffmpeg_bytes2bytes(uploaded_mp3_file.getvalue())
+def on_file_change(uploaded_file):
+    return convert_file_to_mp3_bytes2bytes(uploaded_file.getvalue())
 
 
 def on_change_callback():
     """
     It prints a message to the console. Just for testing of callbacks.
     """
-    print(f'on_change_callback: {uploaded_mp3_file}')
+    print(f'on_change_callback: {uploaded_file}')
 
 
 # The below code is a simple streamlit web app that allows you to upload an mp3 file
 # and then download the converted wav file.
 if __name__ == '__main__':
-    st.title('MP3 to WAV Converter test app')
-    st.markdown("""This is a quick example app for using **ffmpeg** on Streamlit Cloud.
-    It uses the `ffmpeg` binary and the python wrapper `ffmpeg-python` library.""")
+    st.title('WhisperWords')
+    st.markdown("""Upload file for transcription""")
 
-    uploaded_mp3_file = st.file_uploader('Upload Your MP3 File', type=['mp3'], on_change=on_change_callback)
+    uploaded_file = st.file_uploader('Upload Your File', type=['mp3','aac','wav','mp4'], on_change=on_change_callback)
 
     if uploaded_mp3_file:
-        uploaded_mp3_file_length = len(uploaded_mp3_file.getvalue())
-        filename = pathlib.Path(uploaded_mp3_file.name).stem
-        if uploaded_mp3_file_length > 0:
-            st.text(f'Size of uploaded "{uploaded_mp3_file.name}" file: {uploaded_mp3_file_length} bytes')
-            downloadfile = on_file_change(uploaded_mp3_file)
+        uploaded_file_length = len(uploaded_file.getvalue())
+        filename = pathlib.Path(uploaded_file.name).stem
+        if uploaded_file_length > 0:
+            st.text(f'Size of uploaded "{uploaded_file.name}" file: {uploaded_file_length} bytes')
+            downloadfile = on_file_change(uploaded_file)
 
     st.markdown("""---""")
     if downloadfile:
         length = len(downloadfile)
         if length > 0:
-            st.subheader('After conversion to WAV you can download it below')
-            button = st.download_button(label="Download .wav file",
+            st.subheader('After conversion to MP3 you can download it below')
+            button = st.download_button(label="Download .mp3 file",
                             data=downloadfile,
-                            file_name=f'{filename}.wav',
-                            mime='audio/wav')
-            st.text(f'Size of "{filename}.wav" file to download: {length} bytes')
+                            file_name=f'{filename}.mp3',
+                            mime='audio/mp3')
+            st.text(f'Size of "{filename}.mp3" file to download: {length} bytes')
     st.markdown("""---""")
