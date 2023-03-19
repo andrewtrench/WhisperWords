@@ -113,7 +113,8 @@ def transcript_with_whisper(converted_file: bytes) -> str:
     details = enter_details()
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    audio_file = open("audio.mp3", "rb")
+    audio_file = converted_file
+    #audio_file = open("audio.mp3", "rb")
     transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                          prompt=details,
                                          temperature=0.5,)
