@@ -92,12 +92,14 @@ def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
             ['ffmpeg'] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
     converted_file = proc.communicate(input=input_data)[0]
-    parent_path = pathlib.Path(__file__).parent.parent.resolve()
-    save_path = os.path.join(parent_path, "converted")
-    complete_name = os.path.join(save_path, converted_file.name)
-    st.write(f"Place where file is stored {complete_name}")
-    with open(f"{complete_name}", "wb") as f:
+    with open(f"{converted_file}", "wb") as f:
+        parent_path = pathlib.Path(__file__).parent.parent.resolve()
+        save_path = os.path.join(parent_path, "converted")
+        complete_name = os.path.join(save_path, "converted.mp3")
+        st.write(f"Place where file is stored {complete_name}")
         f.write(converted_file)
+
+
 
     # Display a success message
     st.success("File converted successfully!")
