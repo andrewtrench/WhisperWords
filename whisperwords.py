@@ -92,19 +92,13 @@ def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
             ['ffmpeg'] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
     converted_file = proc.communicate(input=input_data)[0]
-    with open(f"{converted_file}", "wb") as f:
-        parent_path = pathlib.Path(__file__).parent.parent.resolve()
-        save_path = os.path.join(parent_path, "converted")
-        complete_name = os.path.join(save_path, "converted.mp3")
-        st.write(f"Place where file is stored {complete_name}")
-        f.write(converted_file)
 
 
 
     # Display a success message
     st.success("File converted successfully!")
 
-    return complete_name
+    return converted_file
 
 @st.cache_data
 def on_file_change(uploaded_file):
@@ -118,16 +112,16 @@ def on_change_callback():
     print(f'Processing: {uploaded_file}')
 
 
-def transcript_with_whisper(path):
+def transcript_with_whisper(converted_file:bytes):
     # This function transcribes the audio file and returns the transcript using openai's whisperwords api
 
     # get the details of the interview
     details = enter_details()
 
     openai.api_key = os.getenv("OPENAI_API_KEY")
-    audio_file = path
-    audio_file = open(audio_file, "rb")
-    transcript = openai.Audio.transcribe("whisper-1", audio_file,
+    #audio_file = path
+    #audio_file = open(audio_file, "rb")
+    transcript = openai.Audio.transcribe("whisper-1", converted_file,
                                          prompt=details,
                                          temperature=0.5,)
     transcript = transcript['text']
