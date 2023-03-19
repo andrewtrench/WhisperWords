@@ -71,7 +71,7 @@ def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
     """
     # Detect file type
     file_type = detect_file_type(input_data)
-    input_format = file_type.extension
+    input_format = file_type
 
     # Convert to mp3
     args = (ffmpeg
