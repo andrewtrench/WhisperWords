@@ -94,7 +94,7 @@ def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
     converted_file = proc.communicate(input=input_data)[0]
     parent_path = pathlib.Path(__file__).parent.parent.resolve()
     save_path = os.path.join(parent_path, "converted")
-    complete_name = os.path.join(save_path, converted_file)
+    complete_name = os.path.join(save_path, converted_file.name)
     st.write(f"Place where file is stored {complete_name}")
     with open(f"{complete_name}", "wb") as f:
         f.write(converted_file)
