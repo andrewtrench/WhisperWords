@@ -8,6 +8,7 @@ import streamlit as st
 from dotenv import load_dotenv
 from pydub import AudioSegment
 
+
 load_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 # global variables
@@ -91,14 +92,17 @@ def convert_file_to_mp3_bytes2bytes(input_data: bytes) -> bytes:
             ['ffmpeg'] + args, stdin=subprocess.PIPE, stdout=subprocess.PIPE
             )
     converted_file = proc.communicate(input=input_data)[0]
-
-    with open("converted/converted.mp3", "wb") as f:
+    parent_path = pathlib.Path(__file__).parent.parent.resolve()
+    save_path = os.path.join(parent_path, "converted")
+    complete_name = os.path.join(save_path, uploaded_file.name)
+    st.write(f"Place where file is stored {complete_name}")
+    with open(f"{complete_name}", "wb") as f:
         f.write(converted_file)
 
     # Display a success message
-    st.success("File comverted successfully!")
-    converted_path = "converted/converted.mp3"
-    return converted_path
+    st.success("File converted successfully!")
+
+    return complete_name
 
 @st.cache_data
 def on_file_change(uploaded_file):
@@ -134,13 +138,8 @@ def upload_file_for_transcription():
 
     uploaded_file = st.file_uploader('Upload Your File', type=['mp3', 'aac', 'wav', 'mp4'],
                                      on_change=on_change_callback)
-
-    if uploaded_file:
-        uploaded_file_length = len(uploaded_file.getvalue())
-        filename = pathlib.Path(uploaded_file.name).stem
-        if uploaded_file_length > 0:
-            converted_file = convert_file_to_mp3_bytes2bytes(uploaded_file.getvalue())
-            transcript_with_whisper(converted_file)
+    converted_file = convert_file_to_mp3_bytes2bytes(uploaded_file.getvalue())
+    transcript_with_whisper(converted_file)
 
 
 
