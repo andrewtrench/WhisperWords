@@ -96,7 +96,7 @@ if __name__ == '__main__':
     uploaded_file = st.file_uploader('Upload Your File', type=['mp3', 'aac', 'wav', 'mp4'],
                                      on_change=on_change_callback)
 
-    if uploaded_mp3_file:
+    if uploaded_file:
         uploaded_file_length = len(uploaded_file.getvalue())
         filename = pathlib.Path(uploaded_file.name).stem
         if uploaded_file_length > 0:
