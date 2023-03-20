@@ -30,9 +30,10 @@ def upload_file():
             f.write(file.getbuffer())
         # Print a success message
         st.success(f"File saved to {filepath}")
+        return filepath
 
 
-def _transcribe(self, audio_path: str):
+def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
     audio_file = open(audio_path, "rb")
     transcript = openai.Audio.transcribe("whisper-1", audio_file,
@@ -43,5 +44,5 @@ def _transcribe(self, audio_path: str):
 
 if __name__ == "__main__":
     st.title("Whisper UI")
-    upload_file()
-    _transcribe()
+    filepath = upload_file()
+    _transcribe(filepath)
