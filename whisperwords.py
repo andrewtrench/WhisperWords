@@ -11,7 +11,7 @@ import streamlit as st
 
 
 
-load_dotenv()
+load_dotenv(verbose=True)
 openai.api_key = os.getenv("OPENAI_API_KEY")
 st.write(os.environ)
 st.write(openai.api_key)
