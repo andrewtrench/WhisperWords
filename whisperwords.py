@@ -6,15 +6,11 @@ import os
 import dotenv
 import openai
 import streamlit as st
-from dotenv import load_dotenv
+# from dotenv import load_dotenv
 import streamlit as st
 
+openai.api_key = st.secrets['OPENAI_API_KEY']
 
-
-load_dotenv(verbose=True)
-openai.api_key = os.getenv("OPENAI_API_KEY")
-st.write(os.environ)
-st.write(openai.api_key)
 
 # global variables
 
@@ -44,10 +40,11 @@ def _transcribe(audio_path: str):
     if audio_path:
         audio_file = open(audio_path, "rb")
         transcript = openai.Audio.transcribe("whisper-1", audio_file,
-                                         response="verbose_json",
-                                         temperature=0.5, )
+                                             response="verbose_json",
+                                             temperature=0.5, )
         st.write(transcript)
         return transcript
+
 
 if __name__ == "__main__":
     st.title("Whisper UI")
