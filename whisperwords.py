@@ -3,12 +3,14 @@
 
 import os
 
+import dotenv
 import openai
 import streamlit as st
 from dotenv import load_dotenv
 import streamlit as st
 
-load_dotenv()
+#load_dotenv()
+dotenv.find_dotenv()
 openai.api_key = os.getenv("OPENAI_API_KEY")
 
 
@@ -47,5 +49,5 @@ def _transcribe(audio_path: str):
 if __name__ == "__main__":
     st.title("Whisper UI")
     filepath = upload_file()
-    st.write(openai.api_key)
+
     _transcribe(filepath)
