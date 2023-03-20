@@ -21,6 +21,8 @@ def upload_file():
     file = st.file_uploader("Upload file")
     # If the user uploads a file
     if file is not None:
+        if not os.path.exists("uploads"):
+            os.mkdir("uploads")
         # Get the file name
         filename = file.name
         # Create a file path to save the uploaded file
@@ -45,4 +47,4 @@ def _transcribe(audio_path: str):
 if __name__ == "__main__":
     st.title("Whisper UI")
     filepath = upload_file()
-    _transcribe(filepath)
+    #_transcribe(filepath)
