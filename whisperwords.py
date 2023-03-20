@@ -39,7 +39,7 @@ def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
     if audio_path:
         audio_file = open(audio_path, "rb")
-        transcript = openai.Audio.transcribe("whisper-1", audio_file,
+        transcript = openai.Audio.translate("whisper-1", audio_file,
                                              response="verbose_json",
                                              temperature=0.5, )
         st.write(transcript['text'])
