@@ -47,4 +47,5 @@ def _transcribe(audio_path: str):
 if __name__ == "__main__":
     st.title("Whisper UI")
     filepath = upload_file()
+    st.write(openai.api_key)
     _transcribe(filepath)
