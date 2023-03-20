@@ -39,12 +39,13 @@ def upload_file():
 
 def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
-    audio_file = open(audio_path, "rb")
-    transcript = openai.Audio.transcribe("whisper-1", audio_file,
+    if audio_path:
+        audio_file = open(audio_path, "rb")
+        transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                          response="verbose_json",
                                          temperature=0.5, )
-    st.write(transcript)
-    return transcript
+        st.write(transcript)
+        return transcript
 
 if __name__ == "__main__":
     st.title("Whisper UI")
