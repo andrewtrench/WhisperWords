@@ -69,9 +69,9 @@ def upload_file():
                 # for i, chunk in enumerate(chunks):
                 #     chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
               new_filepath = "chunks"
-              return new_filepath
+             _transcribe(new_filepath)
         else:
-            return filepath
+            _transcribe(filepath)
 
 def delete_files():
     if not os.path.exists("uploads"):
@@ -89,37 +89,37 @@ def delete_files():
 
 
 def _transcribe(audio_path: str):
+    transcribe_button = st.button("Transcribe")
     st.write(audio_path)
-    """Transcribe the audio file using whisper"""
-    if "chunks" in audio_path:
-        text = ""
-        file_list = os.listdir(audio_path).sort()
-        st.write(file_list)
-        for audio in file_list:
-            audio_file = open(f"chunks/{audio}", "rb")
+    if transcribe_button:
+
+        """Transcribe the audio file using whisper"""
+        if "chunks" in audio_path:
+            text = ""
+            file_list = os.listdir(audio_path).sort()
+            st.write(file_list)
+            for audio in file_list:
+                audio_file = open(f"chunks/{audio}", "rb")
+                transcript = openai.Audio.transcribe("whisper-1", audio_file,
+                                                     response="verbose_json",
+                                                     temperature=0.5, )
+                text.append = id_questions(transcript['text'])
+            st.markdown(text, unsafe_allow_html=True)
+
+        else:
+            audio_file = open(audio_path, "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
                                                  temperature=0.5, )
-            text.append = id_questions(transcript['text'])
-        st.markdown(text, unsafe_allow_html=True)
-
-    else:
-        audio_file = open(audio_path, "rb")
-        transcript = openai.Audio.transcribe("whisper-1", audio_file,
-                                             response="verbose_json",
-                                             temperature=0.5, )
-        text = id_questions(transcript['text'])
-        st.markdown(text, unsafe_allow_html=True)
-    delete_files()
+            text = id_questions(transcript['text'])
+            st.markdown(text, unsafe_allow_html=True)
+        delete_files()
 
 
 if __name__ == "__main__":
     # make sure all folders are empty first
     delete_files()
     st.title("Whisper UI")
-    filepath = upload_file()
-    transcribe_button = st.button("Transcribe")
-    if transcribe_button:
-        with st.spinner("Transcribing...Please wait"):
-            _transcribe(filepath)
-        st.success("Transcription complete")
+    upload_file()
+
+
