@@ -2,7 +2,7 @@
 # from db import ENGINE, Media, Segment, Transcript
 
 import os
-
+import re
 
 import openai
 import streamlit as st
@@ -16,6 +16,12 @@ openai.api_key = st.secrets['OPENAI_API_KEY']
 
 
 # upload a file from local to streamlit and save it to a directory called uploads
+
+def id_questions(text):
+    pattern = r"([^.!?]*\?)"
+    new_text = re.sub(pattern, r"\n\n\1", text)
+    return new_text
+
 
 def upload_file():
     file = st.file_uploader("Upload file")
