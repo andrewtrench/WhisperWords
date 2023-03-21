@@ -5,10 +5,12 @@ import os
 import re
 from pydub import AudioSegment, silence
 import openai
-import streamlit as st
 import ffmpeg
 import streamlit as st
 from pathlib import Path
+from pydub import AudioSegment
+
+from pydub import AudioSegment, silence
 
 openai.api_key = st.secrets['OPENAI_API_KEY']
 
@@ -20,11 +22,6 @@ def id_questions(text):
     new_text = re.sub(pattern, r"\n\n\1</strong>", text)
     new_text = new_text.replace("?", "?\n\n<strong>")
     return new_text
-
-
-from pydub import AudioSegment
-
-from pydub import AudioSegment, silence
 
 
 def split_audio(input_file, output_folder, chunk_duration):
@@ -86,6 +83,10 @@ def upload_file():
 
 
 def delete_files():
+    if not os.path.exists("uploads"):
+        os.mkdir("uploads")
+    if not os.path.exists("chunks"):
+        os.mkdir("chunks")
     for file in os.listdir("uploads"):
         file_path = os.path.join("uploads", file)
         os.remove(file_path)
