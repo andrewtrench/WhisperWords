@@ -28,7 +28,7 @@ def split_audio(input_file, chunk_duration):
     audio = AudioSegment.from_file(input_file)
     audio_segments = audio[::chunk_duration * 1000]
     progress_bar = st.progress(0)
-    total_iteration = len([audio for audio in audio_segments])
+    total_iteration = 100
     i = 1
     if not os.path.exists("uploads/chunks"):
         os.mkdir("uploads/chunks")
