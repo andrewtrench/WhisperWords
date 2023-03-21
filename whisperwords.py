@@ -24,7 +24,7 @@ def id_questions(text):
     return new_text
 
 
-def split_audio(input_file, output_folder, chunk_duration):
+def split_audio(input_file, chunk_duration):
     audio = AudioSegment.from_file(input_file)
     audio_segments = audio[::chunk_duration * 1000]
     with st.spinner("Splitting audio into chunks"):
@@ -60,7 +60,7 @@ def upload_file():
 
             if not os.path.exists("chunks"):
                 os.mkdir("chunks")
-            split_audio(filepath, "chunks", 60)
+            split_audio(filepath, 60)
                 # chunk_size = 1024 * 1024
                 #
                 # audio = AudioSegment.from_file(filepath)
@@ -117,6 +117,7 @@ if __name__ == "__main__":
     delete_files()
     st.title("Whisper UI")
     file_path = upload_file()
+    st.write(file_path)
     transcribe_button = st.button("Transcribe")
     if transcribe_button:
         _transcribe(file_path)
