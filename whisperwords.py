@@ -32,14 +32,6 @@ def split_audio(input_file, output_folder, chunk_duration):
         start_time = i * chunk_duration * 1000
         end_time = (i + 1) * chunk_duration * 1000
         chunk = audio[start_time:end_time]
-
-        # Find the last silence in the chunk and trim the chunk there
-        reversed_chunk = chunk.reverse().fade_in(1000).apply_gain(-20)
-        last_silence = silence.detect_silence(reversed_chunk, min_silence_len=1000, silence_thresh=-100)
-        if len(last_silence) > 0:
-            last_silence_end = len(chunk) - last_silence[0][0] + 1000
-            chunk = chunk[:last_silence_end]
-
         # Save the chunk to a file
         chunk_name = f"{i}.mp3"
         chunk.export(f"{output_folder}/{chunk_name}", format="mp3")
@@ -63,10 +55,9 @@ def upload_file():
         if filesize > 24:
             with st.spinner("Splitting file into chunks...Please wait"):
 
-                try:
+                if not os.path.exists("chunks"):
                     os.mkdir("chunks")
-                except FileExistsError:
-                    pass
+
                 split_audio(filepath, "chunks", 60)
                 # chunk_size = 1024 * 1024
                 #
