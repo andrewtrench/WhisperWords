@@ -16,8 +16,8 @@ openai.api_key = st.secrets['OPENAI_API_KEY']
 
 def id_questions(text):
     pattern = r"([^.!?]*\?)"
-    new_text = re.sub(pattern, r"\n\n\1<b>", text)
-    new_text = new_text.replace("?", "?\n\n,</b>")
+    new_text = re.sub(pattern, r"\n\n\1<strong>", text)
+    new_text = new_text.replace("?", "?\n\n</strong>")
     return new_text
 
 
@@ -47,7 +47,7 @@ def _transcribe(audio_path: str):
                                             response="verbose_json",
                                             temperature=0.5, )
         text = id_questions(transcript['text'])
-        st.markdown(text)
+        st.markdown(text,unsafe_allow_html=True)
         return transcript
 
 
