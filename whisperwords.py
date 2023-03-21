@@ -16,8 +16,8 @@ openai.api_key = st.secrets['OPENAI_API_KEY']
 
 def id_questions(text):
     pattern = r"([^.!?]*\?)"
-    new_text = re.sub(pattern, r"\n\n\1", text)
-    new_text = new_text.replace("?", "?\n\n")
+    new_text = re.sub(pattern, r"\n\n\1<b>", text)
+    new_text = new_text.replace("?", "?\n\n,</b>")
     return new_text
 
 
