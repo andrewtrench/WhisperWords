@@ -40,7 +40,7 @@ def split_audio(input_file, chunk_duration):
         progress = (i / total_iteration)
         progress_bar.progress(progress)
     filelist = []
-    for root, dirs, files in os.walk(os.cwd()):
+    for root, dirs, files in os.walk(os.getcwd()):
         for file in files:
             filename = os.path.join(root, file)
             filelist.append(filename)
