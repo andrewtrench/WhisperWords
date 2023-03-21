@@ -26,11 +26,15 @@ def id_questions(text):
 
 def split_audio(input_file, output_folder, chunk_duration):
     audio = AudioSegment.from_file(input_file)
+    st.write(audio)
     chunk_count = int(audio.duration_seconds / chunk_duration) + 1
 
     for i in range(chunk_count):
         start_time = i * chunk_duration * 1000
+        st.write(start_time)
+
         end_time = (i + 1) * chunk_duration * 1000
+        st.write(end_time)
         chunk = audio[start_time:end_time]
         # Save the chunk to a file
         chunk_name = f"{i}.mp3"
@@ -53,20 +57,19 @@ def upload_file():
         # if file greater than 24mb split it into 1mb chunks using ffmpeg
         filesize = os.path.getsize(filepath) / (1024 * 1024)
         if filesize > 24:
-            with st.spinner("Splitting file into chunks...Please wait"):
+            st.success("File is greater than 24mb, splitting into 1mb chunks")
 
-                if not os.path.exists("chunks"):
-                    os.mkdir("chunks")
-
-                split_audio(filepath, "chunks", 60)
+            if not os.path.exists("chunks"):
+              os.mkdir("chunks")
+              split_audio(filepath, "chunks", 300)
                 # chunk_size = 1024 * 1024
                 #
                 # audio = AudioSegment.from_file(filepath)
                 # chunks = audio[::chunk_size]
                 # for i, chunk in enumerate(chunks):
                 #     chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
-                filepath = "chunks"
-                return filepath
+              filepath = "chunks"
+              return filepath
 
         # Print a success message
         st.success(f"File saved to {filepath}")
