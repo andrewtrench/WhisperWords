@@ -28,7 +28,7 @@ def split_audio(input_file, chunk_duration):
     audio = AudioSegment.from_file(input_file)
     audio_segments = audio[::chunk_duration * 1000]
     progress_bar = st.progress(0)
-    total_iteration = len(audio_segments.__iter__())
+    total_iteration = len([audio for audio in audio_segments])
     i=1
     for chunk in audio_segments:
         chunk_name = f"{i}.mp3"
