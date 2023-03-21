@@ -38,7 +38,7 @@ def split_audio(input_file, chunk_duration):
         progress_bar.progress(progress)
 
     # Get the list of files in the 'chunks' directory and sort it
-    sorted_files = sorted(os.listdir(Path("chunks")))
+    sorted_files = sorted(os.listdir("chunks"))
 
     st.write(f"Sorted chunk directory:{sorted_files}")
     for audio in sorted_files:
