@@ -33,8 +33,8 @@ def split_audio(input_file, chunk_duration):
             chunk_name = f"{i}.mp3"
             chunk.export(f"chunks/{chunk_name}", format="mp3")
             i+=1
+            _transcribe_chunks(f'chunks/{chunk_name}')
 
-        st.success("Audio split into chunks")
 
 
 def upload_file():
@@ -67,8 +67,7 @@ def upload_file():
                 # chunks = audio[::chunk_size]
                 # for i, chunk in enumerate(chunks):
                 #     chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
-            new_filepath = "chunks"
-            return new_filepath
+
         else:
             return filepath
 def delete_files():
@@ -85,30 +84,21 @@ def delete_files():
     st.success("Files deleted from uploads and processing directories")
     return
 
-
-def _transcribe(audio_path: str):
-    audio_path='chunks'
-    st.write(audio_path)
-    """Transcribe the audio file using whisper"""
-    if "chunks" in audio_path:
-        text = ""
-        file_list = os.listdir(audio_path).sort()
-        st.write(file_list)
-        for audio in file_list:
-            audio_file = open(f"chunks/{audio}", "rb")
-            transcript = openai.Audio.transcribe("whisper-1", audio_file,
-                                                 response="verbose_json",
-                                                 temperature=0.5, )
-            text.append = id_questions(transcript['text'])
-        st.markdown(text, unsafe_allow_html=True)
-
-    else:
-        audio_file = open(audio_path, "rb")
-        transcript = openai.Audio.transcribe("whisper-1", audio_file,
+def _transcribe_chunks(audio_path: str):
+    audio_file = open(f"chunks/{audio_path}", "rb")
+    transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                              response="verbose_json",
                                              temperature=0.5, )
-        text = id_questions(transcript['text'])
-        st.markdown(text, unsafe_allow_html=True)
+    st.write(transcript['text'])
+
+
+def _transcribe(audio_path: str):
+    audio_file = open(audio_path, "rb")
+    transcript = openai.Audio.transcribe("whisper-1", audio_file,
+                                             response="verbose_json",
+                                             temperature=0.5, )
+    text = id_questions(transcript['text'])
+    st.markdown(text, unsafe_allow_html=True)
     delete_files()
 
 
@@ -117,7 +107,7 @@ if __name__ == "__main__":
     delete_files()
     st.title("Whisper UI")
     file_path = upload_file()
-    st.write(file_path)
+
     transcribe_button = st.button("Transcribe")
     if transcribe_button:
         _transcribe(file_path)
