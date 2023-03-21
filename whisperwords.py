@@ -91,9 +91,8 @@ def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
     if "chunks" in audio_path:
         text = ""
-        st.write(os.listdir(audio_path))
-
-        for audio in os.listdir(audio_path):
+        file_list = os.listdir(audio_path).sort()
+        for audio in file_list
             audio_file = open(f"chunks/{audio}", "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
