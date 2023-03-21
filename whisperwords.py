@@ -35,14 +35,17 @@ def upload_file():
         with open(filepath, "wb") as f:
             f.write(file.getbuffer())
         # if file greater than 24mb split it into 1mb chunks using ffmpeg
-        filesize = os.path.getsize(filepath)/(1024*1024)
+        filesize = os.path.getsize(filepath) / (1024 * 1024)
         if filesize > 24:
-            os.mkdir("chunks")
-            chunk_size = 1024*1024
+            try:
+                os.mkdir("chunks")
+            except FileExistsError:
+                pass
+            chunk_size = 1024 * 1024
             input_file_size = os.path.getsize(filepath)
             audio = AudioSegment.from_file(filepath)
             chunks = audio[::chunk_size]
-            for i,chunk in enumerate(chunks):
+            for i, chunk in enumerate(chunks):
                 chunk.export(f"chunks/{filename}_{i}.wav", format="wav")
             filepath = os.listdir("chunks")
             return filepath
@@ -50,6 +53,16 @@ def upload_file():
         # Print a success message
         st.success(f"File saved to {filepath}")
         return filepath
+
+
+def delete_files():
+    for file in os.listdir("uploads"):
+        file_path = os.path.join("uploads", file)
+        os.remove(file_path)
+    for file in os.listdir("chunks"):
+        file_path = os.path.join("chunks", file)
+        os.remove(file_path)
+    st.success("Files deleted from uploads and processing directories")
 
 
 def _transcribe(audio_path: str):
@@ -66,10 +79,11 @@ def _transcribe(audio_path: str):
     else:
         audio_file = open(audio_path, "rb")
         transcript = openai.Audio.transcribe("whisper-1", audio_file,
-                                            response="verbose_json",
-                                            temperature=0.5, )
+                                             response="verbose_json",
+                                             temperature=0.5, )
         text = id_questions(transcript['text'])
-        st.markdown(text,unsafe_allow_html=True)
+        st.markdown(text, unsafe_allow_html=True)
+    delete_files()
 
 
 if __name__ == "__main__":
