@@ -52,6 +52,8 @@ def upload_file():
         # Write the file to the uploads folder
         with open(filepath, "wb") as f:
             f.write(file.getbuffer())
+            st.success(f"File saved to {filepath}")
+
         # if file greater than 24mb split it into 1mb chunks using ffmpeg
         filesize = os.path.getsize(filepath) / (1024 * 1024)
         if filesize > 24:
@@ -66,13 +68,10 @@ def upload_file():
                 # chunks = audio[::chunk_size]
                 # for i, chunk in enumerate(chunks):
                 #     chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
-              filepath = "chunks"
-              return filepath
-
-        # Print a success message
-        st.success(f"File saved to {filepath}")
-        return filepath
-
+              new_filepath = "chunks"
+              return new_filepath
+        else:
+            return filepath
 
 def delete_files():
     if not os.path.exists("uploads"):
