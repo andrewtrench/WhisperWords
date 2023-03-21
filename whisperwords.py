@@ -22,6 +22,29 @@ def id_questions(text):
     return new_text
 
 
+from pydub import AudioSegment
+
+
+def split_audio(input_file, output_folder, chunk_duration):
+    audio = AudioSegment.from_file(input_file)
+    chunk_count = int(audio.duration_seconds / chunk_duration) + 1
+
+    for i in range(chunk_count):
+        start_time = i * chunk_duration * 1000
+        end_time = (i + 1) * chunk_duration * 1000
+        chunk = audio[start_time:end_time]
+
+        # Find the last silence in the chunk and trim the chunk there
+        last_silence = chunk.reverse().fade_in(1000).apply_gain(-20).find_silence(1000, 100)
+        if len(last_silence) > 0:
+            last_silence_end = len(chunk) - last_silence[0][0] + 1000
+            chunk = chunk[:last_silence_end]
+
+        # Save the chunk to a file
+        chunk_name = f"{i}.mp3"
+        chunk.export(f"{output_folder}/{chunk_name}", format="mp3")
+
+
 def upload_file():
     file = st.file_uploader("Upload file")
     # If the user uploads a file
@@ -44,12 +67,13 @@ def upload_file():
                     os.mkdir("chunks")
                 except FileExistsError:
                     pass
-                chunk_size = 1024 * 1024
-
-                audio = AudioSegment.from_file(filepath)
-                chunks = audio[::chunk_size]
-                for i, chunk in enumerate(chunks):
-                    chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
+                split_audio(filepath, "chunks", 60)
+                # chunk_size = 1024 * 1024
+                #
+                # audio = AudioSegment.from_file(filepath)
+                # chunks = audio[::chunk_size]
+                # for i, chunk in enumerate(chunks):
+                #     chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
                 filepath = "chunks"
                 return filepath
 
@@ -71,6 +95,7 @@ def delete_files():
 def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
     if "chunks" in audio_path:
+        text = ""
         st.write(os.listdir(audio_path))
 
         for audio in os.listdir(audio_path):
@@ -79,8 +104,8 @@ def _transcribe(audio_path: str):
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
                                                  temperature=0.5, )
-            text = id_questions(transcript['text'])
-            st.markdown(text, unsafe_allow_html=True)
+            text.append = id_questions(transcript['text'])
+        st.markdown(text, unsafe_allow_html=True)
 
     else:
         audio_file = open(audio_path, "rb")
