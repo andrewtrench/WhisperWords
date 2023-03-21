@@ -93,7 +93,7 @@ def _transcribe(audio_path: str):
         text = ""
         file_list = os.listdir(audio_path).sort()
         st.write(file_list)
-        for audio in file_list
+        for audio in file_list:
             audio_file = open(f"chunks/{audio}", "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
