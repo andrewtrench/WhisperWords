@@ -45,6 +45,7 @@ def upload_file():
             os.mkdir("uploads")
         # Get the file name
         filename = file.name
+
         # Create a file path to save the uploaded file
         filepath = os.path.join("uploads", filename)
         # Write the file to the uploads folder
@@ -86,31 +87,29 @@ def delete_files():
 
 
 def _transcribe(audio_path: str):
-    transcribe_button = st.button("Transcribe")
+
     st.write(audio_path)
-    if transcribe_button:
-
-        """Transcribe the audio file using whisper"""
-        if "chunks" in audio_path:
-            text = ""
-            file_list = os.listdir(audio_path).sort()
-            st.write(file_list)
-            for audio in file_list:
-                audio_file = open(f"chunks/{audio}", "rb")
-                transcript = openai.Audio.transcribe("whisper-1", audio_file,
-                                                     response="verbose_json",
-                                                     temperature=0.5, )
-                text.append = id_questions(transcript['text'])
-            st.markdown(text, unsafe_allow_html=True)
-
-        else:
-            audio_file = open(audio_path, "rb")
+    """Transcribe the audio file using whisper"""
+    if "chunks" in audio_path:
+        text = ""
+        file_list = os.listdir(audio_path).sort()
+        st.write(file_list)
+        for audio in file_list:
+            audio_file = open(f"chunks/{audio}", "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
                                                  temperature=0.5, )
-            text = id_questions(transcript['text'])
-            st.markdown(text, unsafe_allow_html=True)
-        delete_files()
+            text.append = id_questions(transcript['text'])
+        st.markdown(text, unsafe_allow_html=True)
+
+    else:
+        audio_file = open(audio_path, "rb")
+        transcript = openai.Audio.transcribe("whisper-1", audio_file,
+                                             response="verbose_json",
+                                             temperature=0.5, )
+        text = id_questions(transcript['text'])
+        st.markdown(text, unsafe_allow_html=True)
+    delete_files()
 
 
 if __name__ == "__main__":
