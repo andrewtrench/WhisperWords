@@ -60,15 +60,15 @@ def upload_file():
 
             if not os.path.exists("chunks"):
                 os.mkdir("chunks")
-                split_audio(filepath, "chunks", 60)
+            split_audio(filepath, "chunks", 60)
                 # chunk_size = 1024 * 1024
                 #
                 # audio = AudioSegment.from_file(filepath)
                 # chunks = audio[::chunk_size]
                 # for i, chunk in enumerate(chunks):
                 #     chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
-                new_filepath = "chunks"
-                return new_filepath
+            new_filepath = "chunks"
+            return new_filepath
         else:
             return filepath
 def delete_files():
