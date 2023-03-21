@@ -38,18 +38,20 @@ def upload_file():
         # if file greater than 24mb split it into 1mb chunks using ffmpeg
         filesize = os.path.getsize(filepath) / (1024 * 1024)
         if filesize > 24:
-            try:
-                os.mkdir("chunks")
-            except FileExistsError:
-                pass
-            chunk_size = 1024 * 1024
+            with st.spinner("Splitting file into chunks...Please wait"):
 
-            audio = AudioSegment.from_file(filepath)
-            chunks = audio[::chunk_size]
-            for i, chunk in enumerate(chunks):
-                chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
-            filepath = "chunks"
-            return filepath
+                try:
+                    os.mkdir("chunks")
+                except FileExistsError:
+                    pass
+                chunk_size = 1024 * 1024
+
+                audio = AudioSegment.from_file(filepath)
+                chunks = audio[::chunk_size]
+                for i, chunk in enumerate(chunks):
+                    chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
+                filepath = "chunks"
+                return filepath
 
         # Print a success message
         st.success(f"File saved to {filepath}")
@@ -69,6 +71,7 @@ def delete_files():
 def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
     if "chunks" in audio_path:
+        st.write(os.listdir(audio_path))
 
         for audio in os.listdir(audio_path):
 
