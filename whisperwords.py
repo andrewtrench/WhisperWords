@@ -3,16 +3,16 @@
 
 import os
 
-import dotenv
+
 import openai
 import streamlit as st
-# from dotenv import load_dotenv
+
 import streamlit as st
 
 openai.api_key = st.secrets['OPENAI_API_KEY']
 
 
-# global variables
+
 
 
 # upload a file from local to streamlit and save it to a directory called uploads
