@@ -29,16 +29,19 @@ def split_audio(input_file, chunk_duration):
     audio_segments = audio[::chunk_duration * 1000]
     progress_bar = st.progress(0)
     total_iteration = len([audio for audio in audio_segments])
-    i=1
+    i = 1
     for chunk in audio_segments:
         chunk_name = f"{i}.mp3"
         chunk.export(f"chunks/{chunk_name}", format="mp3")
-        i+=1
-        progress=(i / total_iteration)
+        i += 1
+        progress = (i / total_iteration)
         progress_bar.progress(progress)
 
-    st.write(os.listdir(Path("chunks")).sort())
-    for audio in os.listdir(Path("chunks")).sort():
+    # Get the list of files in the 'chunks' directory and sort it
+    sorted_files = sorted(os.listdir(Path("chunks")))
+
+    st.write(sorted_files)
+    for audio in sorted_files:
         st.write(audio)
         _transcribe_chunks(audio)
 
