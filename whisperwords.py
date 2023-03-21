@@ -86,9 +86,11 @@ def delete_files():
         file_path = os.path.join("chunks", file)
         os.remove(file_path)
     st.success("Files deleted from uploads and processing directories")
+    return
 
 
 def _transcribe(audio_path: str):
+    st.write(audio_path)
     """Transcribe the audio file using whisper"""
     if "chunks" in audio_path:
         text = ""
