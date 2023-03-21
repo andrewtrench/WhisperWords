@@ -34,7 +34,8 @@ def split_audio(input_file, chunk_duration):
         os.mkdir("chunks")
     for chunk in audio_segments:
         chunk_name = f"{i}.mp3"
-        chunk.export(f"chunks/{chunk_name}", format="mp3")
+        filepath = os.path.join("chunks", chunk_name)
+        chunk.export(filepath, format="mp3")
         i += 1
         progress = (i / total_iteration)
         progress_bar.progress(progress)
