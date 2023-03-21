@@ -43,12 +43,12 @@ def upload_file():
             except FileExistsError:
                 pass
             chunk_size = 1024 * 1024
-            input_file_size = os.path.getsize(filepath)
+
             audio = AudioSegment.from_file(filepath)
             chunks = audio[::chunk_size]
             for i, chunk in enumerate(chunks):
-                chunk.export(f"chunks/{filename}_{i}.wav", format="wav")
-            filepath = os.listdir("chunks")
+                chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
+            filepath = "chunks"
             return filepath
 
         # Print a success message
@@ -68,8 +68,9 @@ def delete_files():
 
 def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
-    if type(audio_path) == list:
-        for audio in audio_path:
+    if "chunks" in audio_path:
+
+        for audio in os.listdir(audio_path):
 
             audio_file = open(audio_path, "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
@@ -93,4 +94,4 @@ if __name__ == "__main__":
     filepath = upload_file()
     transcribe_button = st.button("Transcribe")
     if transcribe_button:
-        _transcribe(Path(filepath))
+        _transcribe(filepath)
