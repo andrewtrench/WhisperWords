@@ -72,7 +72,7 @@ def _transcribe(audio_path: str):
 
         for audio in os.listdir(audio_path):
 
-            audio_file = open(audio_path, "rb")
+            audio_file = open(f"chunks/{audio}", "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
                                                  temperature=0.5, )
@@ -94,4 +94,6 @@ if __name__ == "__main__":
     filepath = upload_file()
     transcribe_button = st.button("Transcribe")
     if transcribe_button:
-        _transcribe(filepath)
+        with st.spinner("Transcribing...Please wait"):
+            _transcribe(filepath)
+        st.success("Transcription complete")
