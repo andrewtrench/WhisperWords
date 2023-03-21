@@ -39,7 +39,12 @@ def split_audio(input_file, chunk_duration):
         i += 1
         progress = (i / total_iteration)
         progress_bar.progress(progress)
-
+    filelist = []
+    for root, dirs, files in os.walk(os.cwd()):
+        for file in files:
+            filename = os.path.join(root, file)
+            filelist.append(filename)
+    st.write(filelist)
     # Get the list of files in the 'chunks' directory and sort it
     sorted_files = sorted(os.listdir("chunks"))
 
