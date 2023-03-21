@@ -93,6 +93,8 @@ def _transcribe(audio_path: str):
 
 
 if __name__ == "__main__":
+    # make sure all folders are empty first
+    delete_files()
     st.title("Whisper UI")
     filepath = upload_file()
     transcribe_button = st.button("Transcribe")
