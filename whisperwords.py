@@ -41,6 +41,7 @@ def upload_file():
             chunk_size = 1024*1024
             input_file_size = os.path.getsize(filepath)
             audio = AudioSegment.from_file(filepath)
+            chunks = audio[::chunk_size]
             for i,chunk in enumerate(chunks):
                 chunk.export(f"chunks/{filename}_{i}.wav", format="wav")
             filepath = os.listdir("chunks")
