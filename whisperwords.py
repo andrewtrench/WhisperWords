@@ -70,7 +70,8 @@ def upload_file():
 
             if not os.path.exists("chunks"):
                 os.mkdir("chunks")
-            split_audio(filepath, 60)
+            if st.button("Split Audio"):
+                split_audio(filepath, 60)
                 # chunk_size = 1024 * 1024
                 #
                 # audio = AudioSegment.from_file(filepath)
