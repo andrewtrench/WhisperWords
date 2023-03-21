@@ -8,6 +8,7 @@ import openai
 import streamlit as st
 import ffmpeg
 import streamlit as st
+from pathlib import Path
 
 openai.api_key = st.secrets['OPENAI_API_KEY']
 
@@ -69,7 +70,8 @@ def _transcribe(audio_path: str):
     """Transcribe the audio file using whisper"""
     if type(audio_path) == list:
         for audio in audio_path:
-            audio_file = open(audio_path, "rb")
+
+            audio_file = open(f'audio_path, "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
                                                  temperature=0.5, )
@@ -91,4 +93,4 @@ if __name__ == "__main__":
     filepath = upload_file()
     transcribe_button = st.button("Transcribe")
     if transcribe_button:
-        _transcribe(filepath)
+        _transcribe(Path(filepath))
