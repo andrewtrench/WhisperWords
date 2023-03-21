@@ -3,7 +3,7 @@
 
 import os
 import re
-from pydub import AudioSegment
+from pydub import AudioSegment, silence
 import openai
 import streamlit as st
 import ffmpeg
@@ -24,6 +24,8 @@ def id_questions(text):
 
 from pydub import AudioSegment
 
+from pydub import AudioSegment, silence
+
 
 def split_audio(input_file, output_folder, chunk_duration):
     audio = AudioSegment.from_file(input_file)
@@ -35,7 +37,8 @@ def split_audio(input_file, output_folder, chunk_duration):
         chunk = audio[start_time:end_time]
 
         # Find the last silence in the chunk and trim the chunk there
-        last_silence = chunk.reverse().fade_in(1000).apply_gain(-20).find_silence(1000, 100)
+        reversed_chunk = chunk.reverse().fade_in(1000).apply_gain(-20)
+        last_silence = silence.detect_silence(reversed_chunk, min_silence_len=1000, silence_thresh=-100)
         if len(last_silence) > 0:
             last_silence_end = len(chunk) - last_silence[0][0] + 1000
             chunk = chunk[:last_silence_end]
@@ -99,7 +102,6 @@ def _transcribe(audio_path: str):
         st.write(os.listdir(audio_path))
 
         for audio in os.listdir(audio_path):
-
             audio_file = open(f"chunks/{audio}", "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
