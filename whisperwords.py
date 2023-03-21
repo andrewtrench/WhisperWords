@@ -71,7 +71,7 @@ def _transcribe(audio_path: str):
     if type(audio_path) == list:
         for audio in audio_path:
 
-            audio_file = open(f'audio_path, "rb")
+            audio_file = open(audio_path, "rb")
             transcript = openai.Audio.transcribe("whisper-1", audio_file,
                                                  response="verbose_json",
                                                  temperature=0.5, )
