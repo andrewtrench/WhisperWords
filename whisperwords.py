@@ -34,9 +34,9 @@ def split_audio(input_file, chunk_duration):
             chunk.export(f"chunks/{chunk_name}", format="mp3")
             i+=1
 
-        for audio in os.listdir("chunks").sort():
-            st.write(audio)
-            _transcribe_chunks(audio)
+    for audio in os.listdir("chunks").sort():
+        st.write(audio)
+        _transcribe_chunks(audio)
 
 
 
