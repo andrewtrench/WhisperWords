@@ -26,17 +26,15 @@ def id_questions(text):
 
 def split_audio(input_file, output_folder, chunk_duration):
     audio = AudioSegment.from_file(input_file)
-    st.write(audio)
-    chunk_count = int(audio.duration_seconds / chunk_duration) + 1
+    audio_segments = audio[::chunk_duration * 1000]
     with st.spinner("Splitting audio into chunks"):
-        for i in range(chunk_count):
-            start_time = i * chunk_duration * 1000
-            end_time = (i + 1) * chunk_duration * 1000
-            chunk = audio[start_time:end_time]
-            # Save the chunk to a file
+        i=1
+        for chunk in audio_segments:
             chunk_name = f"{i}.mp3"
-            chunk.export(f"{output_folder}/{chunk_name}", format="mp3")
-    st.success("Audio split into chunks")
+            chunk.export(f"chunks/{chunk_name}", format="mp3")
+            i+=1
+
+        st.success("Audio split into chunks")
 
 
 def upload_file():
@@ -69,10 +67,9 @@ def upload_file():
                 # for i, chunk in enumerate(chunks):
                 #     chunk.export(f"chunks/{filename}_{i}.mp3", format="mp3")
                 new_filepath = "chunks"
-                _transcribe(new_filepath)
+                return new_filepath
         else:
-            _transcribe(filepath)
-
+            return filepath
 def delete_files():
     if not os.path.exists("uploads"):
         os.mkdir("uploads")
@@ -120,6 +117,11 @@ if __name__ == "__main__":
     # make sure all folders are empty first
     delete_files()
     st.title("Whisper UI")
-    upload_file()
+    file_path = upload_file()
+    transcribe_button = st.button("Transcribe")
+    if transcribe_button:
+        _transcribe(file_path)
+
+
 
 
