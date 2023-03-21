@@ -87,7 +87,7 @@ def delete_files():
 
 
 def _transcribe(audio_path: str):
-
+    audio_path='chunks'
     st.write(audio_path)
     """Transcribe the audio file using whisper"""
     if "chunks" in audio_path:
