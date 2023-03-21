@@ -12,14 +12,12 @@ import streamlit as st
 openai.api_key = st.secrets['OPENAI_API_KEY']
 
 
-
-
-
 # upload a file from local to streamlit and save it to a directory called uploads
 
 def id_questions(text):
     pattern = r"([^.!?]*\?)"
     new_text = re.sub(pattern, r"\n\n\1", text)
+    new_text = new_text.replace("?", "?\n\n")
     return new_text
 
 
@@ -46,9 +44,10 @@ def _transcribe(audio_path: str):
     if audio_path:
         audio_file = open(audio_path, "rb")
         transcript = openai.Audio.translate("whisper-1", audio_file,
-                                             response="verbose_json",
-                                             temperature=0.5, )
-        st.markdown(transcript['text'].replace("?","?\n\n"))
+                                            response="verbose_json",
+                                            temperature=0.5, )
+        text = id_questions(transcript['text'])
+        st.markdown(text)
         return transcript
 
 
